@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8"> <!-- Define o conjunto de caracteres como UTF-8 -->
-    <title>Controle de Estoque</title> <!-- Define o título da página -->
+    <meta charset="UTF-8">
+    <title>Controle de Estoque</title> 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> <!-- Link para o CSS do Bootstrap -->
 </head>
 <body>
@@ -20,42 +20,32 @@
             </thead>
             <tbody id="inventoryTable"> <!-- Corpo da tabela com ID "inventoryTable" -->
             <?php
-$servername = "localhost"; // Nome do servidor do banco de dados
-$username = "root"; // Nome de usuário do banco de dados
-$password = ""; // Senha do banco de dados
-$dbname = "estoque"; // Nome do banco de dados
+            // Inclui a conexão ao banco de dados
+            $conn = include_once('bd.php');
 
-// Criar conexão
-$conn = new mysqli($servername, $username, $password, $dbname); // Cria uma nova conexão com o banco de dados
+            // SQL para buscar os dados
+            $sql = "SELECT id, nome, valor, quantidade, descricao FROM itens_estoque"; // Consulta SQL para selecionar dados da tabela
+            $result = $conn->query($sql); // Executa a consulta SQL
 
-// Checar conexão
-if ($conn->connect_error) { // Verifica se houve erro na conexão
-    die("Conexão falhou: " . $conn->connect_error); // Exibe mensagem de erro e termina a execução do script
-}
-
-// SQL para buscar os dados
-$sql = "SELECT id, nome, valor, quantidade, descricao FROM itens_estoque"; // Consulta SQL para selecionar dados da tabela
-$result = $conn->query($sql); // Executa a consulta SQL
-
-if ($result->num_rows > 0) { // Verifica se há resultados
-    // Saída de cada linha
-    while($row = $result->fetch_assoc()) { // Itera sobre os resultados
-        echo "<tr>
-                <td>{$row['nome']}</td> <!-- Exibe o nome do item -->
-                <td>{$row['valor']}</td> <!-- Exibe o valor do item -->
-                <td>{$row['quantidade']}</td> <!-- Exibe a quantidade do item -->
-                <td>{$row['descricao']}</td> <!-- Exibe a descrição do item -->
-                <td>
-                    <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#editModal' onclick='setEditModalValues(\"{$row['id']}\", \"{$row['nome']}\", \"{$row['valor']}\", \"{$row['quantidade']}\", \"{$row['descricao']}\")'>Editar</button> <!-- Botão para abrir modal de edição com valores do item -->
-                    <button class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#deleteModal' onclick='document.getElementById(\"deleteItemId\").value={$row['id']}'>Excluir</button> <!-- Botão para abrir modal de exclusão com o ID do item -->
-                </td>
-              </tr>"; // Fecha a linha da tabela
-    }
-} else { // Se não houver resultados
-    echo "<tr><td colspan='5'>Nenhum item encontrado</td></tr>"; // Exibe mensagem informando que não há itens
-}
-$conn->close(); // Fecha a conexão com o banco de dados
-?>
+            if ($result->num_rows > 0) { // Verifica se há resultados
+                // Saída de cada linha
+                while($row = $result->fetch_assoc()) { // Itera sobre os resultados
+                    echo "<tr>
+                            <td>{$row['nome']}</td> <!-- Exibe o nome do item -->
+                            <td>{$row['valor']}</td> <!-- Exibe o valor do item -->
+                            <td>{$row['quantidade']}</td> <!-- Exibe a quantidade do item -->
+                            <td>{$row['descricao']}</td> <!-- Exibe a descrição do item -->
+                            <td>
+                                <button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#editModal' onclick='setEditModalValues(\"{$row['id']}\", \"{$row['nome']}\", \"{$row['valor']}\", \"{$row['quantidade']}\", \"{$row['descricao']}\")'>Editar</button> <!-- Botão para abrir modal de edição com valores do item -->
+                                <button class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#deleteModal' onclick='document.getElementById(\"deleteItemId\").value={$row['id']}'>Excluir</button> <!-- Botão para abrir modal de exclusão com o ID do item -->
+                            </td>
+                          </tr>"; // Fecha a linha da tabela
+                }
+            } else { // Se não houver resultados
+                echo "<tr><td colspan='5'>Nenhum item encontrado</td></tr>"; // Exibe mensagem informando que não há itens
+            }
+            $conn->close(); // Fecha a conexão com o banco de dados
+            ?>
             </tbody>
         </table>
     </div>
